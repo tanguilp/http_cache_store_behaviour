@@ -1,6 +1,6 @@
 {application, http_cache_store_behaviour,
- [{description, "An OTP library"},
-  {vsn, "0.1.0"},
+ [{description, "http_cache store behaviour"},
+  {vsn, "0.3.0"},
   {registered, []},
   {applications,
    [kernel,

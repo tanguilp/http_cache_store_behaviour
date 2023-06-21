@@ -1,9 +1,11 @@
 http_cache_store_behaviour
 =====
 
-An OTP library
+OTP behaviour for [`http_cache`](ihttps://github.com/tanguilp/http_cache)
+stores.
 
-Build
------
+## Installation
 
-    $ rebar3 compile
+```erlang
+{deps, [{http_cache_store_behaviour, "~> 0.3.0"}]}.
+```
