@@ -1,15 +1,20 @@
 %%%-----------------------------------------------------------------------------
-%%% @doc The behaviour for `http_cache` response stores
+%%% @doc The behaviour for `http_cache' response stores
 %%%
 %%% Keep in mind that for a unique combination of a request's method, URL, body and bucket,
-%%% there still can be several different responses, depending on the `vary' header. A so
-%%% called candidate is a response that matches request information. The main `http_cache'
-%%% module is in charge of selecting a response according to the vary header.
+%%% there still can be several different responses, depending on the `vary' and
+%%% `content-range' headers. A so called candidate is a response that matches request
+%%% information independently of these two headers. The main `http_cache' module is in charge
+%%% of selecting a response that satisfies these two headers.
+%%%
+%%% One possibility is to include `vary' and `content-range' in the key. The `content-range'
+%%% header, if the returned response is a `206 Partial Response', is stored in the request
+%%% metadata (`#{parsed_headers := #{<<"content-range">> := {bytes, 3, 10, 20}}}' for instance).
 %%%
 %%% This is why the process is the following:
 %%% <ol>
 %%%   <li> `http_cache' request all the potential responses (candidates) using `list_candidates/1' </li>
-%%%   <li> `http_cache' selects the freshest response whose vary header matches </li>
+%%%   <li> `http_cache' selects the freshest response whose `vary' and `content-range' headers match </li>
 %%%   <li> `http_cache' request the response with `get_response/1'</li>
 %%% </ol>
 
@@ -92,8 +97,7 @@
 -callback invalidate_url(UrlDigest :: url_digest(), Opts :: opts()) ->
                             invalidation_result().
 %% Invalidates all responses for a given URL digest
--callback invalidate_by_alternate_key([AltKeys :: alternate_key()],
-                                      Opts :: opts()) ->
+-callback invalidate_by_alternate_key([AltKeys :: alternate_key()], Opts :: opts()) ->
                                          invalidation_result().
 
 %% Invalidates all responses that has been tag with one of the alternate keys

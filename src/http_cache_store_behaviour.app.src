@@ -1,14 +1,10 @@
-{application, http_cache_store_behaviour,
+{application,
+ http_cache_store_behaviour,
  [{description, "http_cache store behaviour"},
   {vsn, "0.3.0"},
   {registered, []},
-  {applications,
-   [kernel,
-    stdlib
-   ]},
-  {env,[]},
+  {applications, [kernel, stdlib]},
+  {env, []},
   {modules, []},
-
   {licenses, ["Apache-2.0"]},
-  {links, []}
- ]}.
+  {links, []}]}.
