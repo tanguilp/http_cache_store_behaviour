@@ -20,8 +20,14 @@
 
 -module(http_cache_store_behaviour).
 
--export_type([request_key/0, candidate/0, stored_response/0, response_ref/0, url_digest/0,
-              opts/0]).
+-export_type([
+    request_key/0,
+    candidate/0,
+    stored_response/0,
+    response_ref/0,
+    url_digest/0,
+    opts/0
+]).
 
 -type status() :: pos_integer().
 %% HTTP status
@@ -35,32 +41,38 @@
 % This is a binary so as to optimize copying around data: an IOlist would have to
 % be copied whereas (big) binaries are simply reference-counted.
 -type candidate() ::
-    {RespRef :: response_ref(),
-     Status :: status(),
-     RespHeaders :: headers(),
-     VaryHeaders :: vary_headers(),
-     RespMetadata :: response_metadata()}.
+    {
+        RespRef :: response_ref(),
+        Status :: status(),
+        RespHeaders :: headers(),
+        VaryHeaders :: vary_headers(),
+        RespMetadata :: response_metadata()
+    }.
 -type opts() :: any().
 %% Options for the backend store
 -type request_key() :: binary().
 %% A unique, opaque, key for a request taking into account the request's information (method,
 %% URL, body and bucket)
 -type stored_response() ::
-    {Status :: status(),
-     Headers :: headers(),
-     BodyOrFile :: body() | {file, file:name_all()},
-     Metadata :: response_metadata()}.
+    {
+        Status :: status(),
+        Headers :: headers(),
+        BodyOrFile :: body() | {file, file:name_all()},
+        Metadata :: response_metadata()
+    }.
 %% Stored HTTP response with its metadata
 %%
 %% The body can either be a binary (for example if the
 %% response is stored in memory) or a file (if the response is stored on disk).
 -type response_metadata() ::
-    #{created := timestamp(),
-      expires := timestamp(),
-      grace := timestamp(),
-      ttl_set_by := header | heuristics,
-      parsed_headers := #{binary() => term()},
-      alternate_keys := [alternate_key()]}.
+    #{
+        created := timestamp(),
+        expires := timestamp(),
+        grace := timestamp(),
+        ttl_set_by := header | heuristics,
+        parsed_headers := #{binary() => term()},
+        alternate_keys := [alternate_key()]
+    }.
 -type response_ref() :: term().
 %% Opaque backend's reference to a response, returned by
 %% `http_cache:get/2' and used as a parameter by `http_cache:notify_response_used/2'.
@@ -80,25 +92,27 @@
 -callback list_candidates(RequestKey :: request_key(), Opts :: opts()) -> [candidate()].
 %% Returns the list of candidates matching a request, via its request key
 -callback get_response(RespRef :: response_ref(), Opts :: opts()) ->
-                          stored_response() | undefined.
+    stored_response() | undefined.
 %% Returns a response from a response reference returned by `list_candidates/1'
--callback put(RequestKey :: request_key(),
-              UrlDigest :: url_digest(),
-              VaryHeaders :: vary_headers(),
-              Response :: http_cache_response(),
-              RespMetadata :: response_metadata(),
-              Opts :: opts()) ->
-                 ok | {error, term()}.
+-callback put(
+    RequestKey :: request_key(),
+    UrlDigest :: url_digest(),
+    VaryHeaders :: vary_headers(),
+    Response :: http_cache_response(),
+    RespMetadata :: response_metadata(),
+    Opts :: opts()
+) ->
+    ok | {error, term()}.
 %% Stores a response and associated metadata
 -callback notify_response_used(RespRef :: response_ref(), Opts :: opts()) ->
-                                  ok | {error, term()}.
+    ok | {error, term()}.
 %% Notify that a response was used. A LRU cache, for instance, would update the timestamp
 %% the response was last used
 -callback invalidate_url(UrlDigest :: url_digest(), Opts :: opts()) ->
-                            invalidation_result().
+    invalidation_result().
 %% Invalidates all responses for a given URL digest
 -callback invalidate_by_alternate_key([AltKeys :: alternate_key()], Opts :: opts()) ->
-                                         invalidation_result().
+    invalidation_result().
 
 %% Invalidates all responses that has been tag with one of the alternate keys
 
