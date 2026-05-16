@@ -1,6 +1,6 @@
 {application, http_cache_store_behaviour, [
     {description, "http_cache store behaviour"},
-    {vsn, "0.3.0"},
+    {vsn, "1.0.0"},
     {registered, []},
     {applications, [kernel, stdlib]},
     {env, []},

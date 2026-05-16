@@ -7,5 +7,5 @@ stores.
 ## Installation
 
 ```erlang
-{deps, [{http_cache_store_behaviour, "~> 0.3.0"}]}.
+{deps, [{http_cache_store_behaviour, "~> 1.0"}]}.
 ```
